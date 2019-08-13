@@ -1,19 +1,10 @@
 import re
 from typing import Tuple, List
 
-from .ascii_grid_data import AsciiGridData
+from ascii_grid_to_png import AsciiGridData
 
 
 class AsciiGridDataReader:
-    required_headers = [
-        'ncols',
-        'nrows',
-        'xllcorner',
-        'yllcorner',
-        'cellsize',
-        'nodata_value'
-    ]
-
     valid_headers = [
         'ncols',
         'nrows',
@@ -40,12 +31,7 @@ class AsciiGridDataReader:
 
                 # Validate headers
                 if 'ncols' not in header_data or 'nrows' not in header_data:
-                    raise Exception(
-                        'Unexpected column count: Expected %d, got %d' % (
-                            int(header_data['ncols']),
-                            len(grid_data_row)
-                        )
-                    )
+                    raise Exception('Unexpected missing headers: ncols/nrows')
 
                 # Read grid data
                 grid_data_row = self._read_grid_data_row(line)
@@ -69,16 +55,14 @@ class AsciiGridDataReader:
                 )
             )
 
-        grid_data = AsciiGridData(grid_data)
-
-        if 'xllcorner' in header_data:
-            grid_data.set_xllcorner(header_data['xllcorner'])
-        if 'yllcorner' in header_data:
-            grid_data.set_yllcorner(header_data['yllcorner'])
-        if 'cellsize' in header_data:
-            grid_data.set_cellsize(header_data['cellsize'])
-        if 'nodata_value' in header_data:
-            grid_data.set_nodata_value(header_data['nodata_value'])
+        grid_data = AsciiGridData(
+            grid_data,
+            header_data['xllcorner'],
+            header_data['yllcorner'],
+            header_data['cellsize'],
+            header_data['nodata_value'] if 'nodata_value' in header_data else
+            None
+        )
 
         return grid_data
 

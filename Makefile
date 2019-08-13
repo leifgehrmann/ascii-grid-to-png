@@ -6,3 +6,6 @@ help: install
 
 run_tests:
 	python -m pytest tests/
+
+lint:
+	flake8 ascii_grid_to_png tests

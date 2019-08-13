@@ -2,3 +2,4 @@ pytest
 click
 numpy
 scipy
+flake8
