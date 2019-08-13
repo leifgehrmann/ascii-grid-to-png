@@ -13,7 +13,8 @@ class GridDataInterpolator:
 
     def __init__(self):
         self.ascii_grids = []
-        self.points = []
+        self.points = None
+        self.values = None
         self.grid_data = []
         self.method = 'nearest'
 
@@ -24,6 +25,10 @@ class GridDataInterpolator:
         self.method = method
 
     def compute(self) -> ndarray:
+        self.points = self._create_points_shape()
+        self.values = self._create_values_shape()
+
+        self.get_data_points(False)
 
         grid_x, grid_y = np.mgrid[0:1:100j, 0:1:200j]
         return griddata(
@@ -33,14 +38,16 @@ class GridDataInterpolator:
             method=self.method
         )
 
-    def _get_points(self):
-        np.empty(shape=[self._get_number_of_points(), 2])
+    def _fill_shape(self, shape: ndarray, ):
 
-    def _get_values(self):
-        np.empty(shape=[self._get_number_of_points(), 1])
+    def _create_points_shape(self) -> ndarray:
+        return np.empty(shape=[self._get_number_of_points(), 2])
+
+    def _create_values_shape(self) -> ndarray:
+        return np.empty(shape=[self._get_number_of_points(), 1])
 
     def _get_number_of_points(self) -> int:
         total_points = 0
         for ascii_grid in self.ascii_grids:
-            total_points += ascii_grid.get_total_data_points()
+            total_points += ascii_grid.get_total_data_points(False)
         return total_points
