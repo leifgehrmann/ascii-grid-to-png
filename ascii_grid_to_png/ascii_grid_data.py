@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Generator
 
 
 class AsciiGridData:
@@ -18,12 +18,12 @@ class AsciiGridData:
         self.nodata_value = nodata_value
         self.total_data_points = None
 
-    def get_total_data_points(self) -> int:
+    def get_total_data_points(self, include_nodata: bool = True) -> int:
         total_data_points = 0
         if self.total_data_points is not None:
             return self.total_data_points
 
-        if self.nodata_value is None:
+        if include_nodata or self.nodata_value is None:
             return self.get_nrows() * self.get_ncols()
 
         for row in self.grid_data:
@@ -32,6 +32,18 @@ class AsciiGridData:
                     total_data_points += 1
 
         return total_data_points
+
+    def get_data_points(
+            self,
+            include_nodata: bool = True
+    ) -> Generator[float, None, None]:
+        for y_idx, row in enumerate(self.grid_data):
+            y = self.yllcorner + y_idx * self.cellsize
+            for x_idx, col in enumerate(row):
+                if not include_nodata and col == self.nodata_value:
+                    continue
+                x = self.xllcorner + x_idx * self.cellsize
+                yield x, y, col
 
     def get_ncols(self) -> int:
         return len(self.grid_data[0])
