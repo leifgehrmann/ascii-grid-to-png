@@ -5,7 +5,7 @@ import numpy as np
 from ascii_grid_to_png import AsciiGridData, AsciiGridDataNdarray
 
 
-class TestAsciiGridData(unittest.TestCase):
+class TestAsciiGridDataNdarray(unittest.TestCase):
 
     def test_generate_with_no_grids(self):
         grid_data_combined = AsciiGridDataNdarray([])
