@@ -23,11 +23,9 @@ class AsciiGridDataReader:
 
                 # Read headers
                 if not headers_read and self._is_header(line):
-                    if self._is_header(line):
-                        header_param, header_value = self._read_header(line)
-                        header_data[header_param] = header_value
-                        continue
-                    headers_read = True
+                    header_param, header_value = self._read_header(line)
+                    header_data[header_param] = header_value
+                    continue
 
                 # Validate headers
                 if 'ncols' not in header_data or 'nrows' not in header_data:
@@ -75,11 +73,12 @@ class AsciiGridDataReader:
     def _read_header(self, line: str) -> Tuple[str, float]:
         line = re.sub("[ \t]+", ' ', line).strip()
         line_split = line.split()
+        print(line_split)
         if len(line_split) != 2:
-            raise Exception('Invalid header: %s' % line_split)
+            raise Exception('Invalid header: %s' % line)
 
         if not self._is_header(line_split[0]):
-            raise Exception('Invalid header: %s' % line_split)
+            raise Exception('Invalid header: %s' % line)
 
         return line_split[0].lower(), float(line_split[1])
 

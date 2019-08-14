@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import Tuple, Any
 
 from numpy.core.multiarray import ndarray
 from scipy.interpolate import griddata
@@ -12,21 +12,27 @@ class Interpolator:
             points: ndarray,
             values: ndarray,
             bbox: Tuple[float, float, float, float],
+            interpolation_method: str,
             scale: float
     ):
         self.points = points
         self.values = values
         self.grid_data = None
-        self.method = 'nearest'
+        self.bbox = bbox
+        self.method = interpolation_method
+        self.scale = scale
 
-    def set_interpolation_method(self, method: str) -> None:
-        self.method = method
-
-    def compute(self) -> ndarray:
-        grid_x, grid_y = np.mgrid[0:1:100j, 0:1:200j]
-        return griddata(
+    def compute(self) -> Tuple[ndarray, ndarray, ndarray]:
+        grid_x, grid_y = self._create_grid()
+        return grid_x, grid_y, griddata(
             self.points,
             self.values,
             (grid_x, grid_y),
             method=self.method
         )
+
+    def _create_grid(self) -> Tuple[Any, Any]:
+        min_x, min_y, max_x, max_y = self.bbox
+        return np.mgrid[
+               min_x:max_x:self.scale, min_y:max_y:self.scale
+               ]

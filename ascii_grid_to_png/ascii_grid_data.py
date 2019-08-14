@@ -19,18 +19,14 @@ class AsciiGridData:
         self.total_data_points = None
 
     def get_total_data_points(self, include_nodata: bool = True) -> int:
-        total_data_points = 0
-        if self.total_data_points is not None:
-            return self.total_data_points
-
         if include_nodata or self.nodata_value is None:
             return self.get_nrows() * self.get_ncols()
 
+        total_data_points = 0
         for row in self.grid_data:
             for col in row:
                 if col != self.nodata_value:
                     total_data_points += 1
-
         return total_data_points
 
     def get_data_points(

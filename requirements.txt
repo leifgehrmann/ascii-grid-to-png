@@ -3,3 +3,4 @@ click
 numpy
 scipy
 flake8
+coverage
