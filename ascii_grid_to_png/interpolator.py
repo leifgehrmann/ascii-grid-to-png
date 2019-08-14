@@ -1,4 +1,4 @@
-from typing import Tuple, Any
+from typing import Tuple, Any, Optional
 
 from numpy.core.multiarray import ndarray
 from scipy.interpolate import griddata
@@ -11,7 +11,7 @@ class Interpolator:
             self,
             points: ndarray,
             values: ndarray,
-            bbox: Tuple[float, float, float, float],
+            bbox: Optional[Tuple[float, float, float, float]],
             interpolation_method: str,
             scale: float
     ):
@@ -32,7 +32,11 @@ class Interpolator:
         )
 
     def _create_grid(self) -> Tuple[Any, Any]:
-        min_x, min_y, max_x, max_y = self.bbox
+        if self.bbox is not None:
+            min_x, min_y, max_x, max_y = self.bbox
+        else:
+            min_x, min_y = np.amin(self.points, axis=0)
+            max_x, max_y = np.amax(self.points, axis=0)
         return np.mgrid[
-               min_x:max_x:self.scale, min_y:max_y:self.scale
+               min_x:max_x:1./self.scale, min_y:max_y:1./self.scale
                ]
