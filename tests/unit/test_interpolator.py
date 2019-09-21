@@ -12,7 +12,7 @@ class TestInterpolator(unittest.TestCase):
         bbox = (10, 10, 30, 40)
         min_x, min_y, max_x, max_y = bbox
 
-        grid_x, grid_y, grid_z = Interpolator(
+        output_bbox, grid_z = Interpolator(
             np.array([
                 [12, 12],
                 [12, 22],
@@ -27,15 +27,14 @@ class TestInterpolator(unittest.TestCase):
                 3,
                 5
             ]),
-            (10, 10, 30, 40),
+            bbox,
             'linear',
             0.5
         ).compute()
 
         expected_size = (max_x - min_x) * scale * (max_y - min_y) * scale
 
-        assert grid_x.size == expected_size
-        assert grid_y.size == expected_size
+        assert bbox == output_bbox
         assert grid_z.size == expected_size
 
     def test_compute_with_none_bbox_returns_max_extents(self):
@@ -43,7 +42,7 @@ class TestInterpolator(unittest.TestCase):
         bbox = (12, 12, 22, 32)
         min_x, min_y, max_x, max_y = bbox
 
-        grid_x, grid_y, grid_z = Interpolator(
+        output_bbox, grid_z = Interpolator(
             np.array([
                 [12, 12],
                 [12, 22],
@@ -65,6 +64,5 @@ class TestInterpolator(unittest.TestCase):
 
         expected_size = (max_x - min_x) * scale * (max_y - min_y) * scale
 
-        assert grid_x.size == expected_size
-        assert grid_y.size == expected_size
+        assert bbox == output_bbox
         assert grid_z.size == expected_size

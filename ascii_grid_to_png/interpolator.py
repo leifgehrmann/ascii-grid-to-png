@@ -22,21 +22,29 @@ class Interpolator:
         self.method = interpolation_method
         self.scale = scale
 
-    def compute(self) -> Tuple[ndarray, ndarray, ndarray]:
-        grid_x, grid_y = self._create_grid()
-        return grid_x, grid_y, griddata(
+    def compute(self) -> Tuple[Tuple[float, float, float, float], ndarray]:
+        bbox = self._get_bbox()
+        grid_x, grid_y = self._create_grid(bbox)
+        return bbox, griddata(
             self.points,
             self.values,
             (grid_x, grid_y),
             method=self.method
         )
 
-    def _create_grid(self) -> Tuple[Any, Any]:
+    def _get_bbox(self) -> Tuple[float, float, float, float]:
         if self.bbox is not None:
-            min_x, min_y, max_x, max_y = self.bbox
+            return self.bbox
         else:
             min_x, min_y = np.amin(self.points, axis=0)
             max_x, max_y = np.amax(self.points, axis=0)
+            return min_x, min_y, max_x, max_y
+
+    def _create_grid(
+            self,
+            bbox: Tuple[float, float, float, float]
+    ) -> Tuple[Any, Any]:
+        min_x, min_y, max_x, max_y = bbox
         return np.mgrid[
                min_x:max_x:1./self.scale, min_y:max_y:1./self.scale
                ]

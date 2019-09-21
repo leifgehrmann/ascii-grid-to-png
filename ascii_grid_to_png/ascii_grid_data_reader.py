@@ -73,7 +73,6 @@ class AsciiGridDataReader:
     def _read_header(self, line: str) -> Tuple[str, float]:
         line = re.sub("[ \t]+", ' ', line).strip()
         line_split = line.split()
-        print(line_split)
         if len(line_split) != 2:
             raise Exception('Invalid header: %s' % line)
 
@@ -84,7 +83,7 @@ class AsciiGridDataReader:
 
     @staticmethod
     def _read_grid_data_row(line: str) -> List[float]:
-        row_strings = line.split(' ')
+        row_strings = line.strip().split(' ')
         row = []
         for row_string in row_strings:
             row.append(float(row_string))

@@ -34,11 +34,11 @@ class AsciiGridData:
             include_nodata: bool = True
     ) -> Generator[float, None, None]:
         for y_idx, row in enumerate(self.grid_data):
-            y = self.yllcorner + y_idx * self.cellsize
+            y = self.yllcorner + (y_idx + 0.5) * self.cellsize
             for x_idx, col in enumerate(row):
                 if not include_nodata and col == self.nodata_value:
                     continue
-                x = self.xllcorner + x_idx * self.cellsize
+                x = self.xllcorner + (x_idx + 0.5) * self.cellsize
                 yield x, y, col
 
     def get_ncols(self) -> int:
