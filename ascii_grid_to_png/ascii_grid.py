@@ -1,21 +1,29 @@
 from typing import List, Optional, Generator
 
+from ascii_grid_to_png import AsciiGridHeader
 
-class AsciiGridData:
+
+class AsciiGrid(AsciiGridHeader):
 
     def __init__(
             self,
-            grid_data: List[List[float]],
+            ncols: int,
+            nrows: int,
             xllcorner: float,
             yllcorner: float,
             cellsize: float,
-            nodata_value: Optional[float] = None
+            nodata_value: Optional[float],
+            grid_data: List[List[float]]
     ):
+        super().__init__(
+            ncols,
+            nrows,
+            xllcorner,
+            yllcorner,
+            cellsize,
+            nodata_value
+        )
         self.grid_data = grid_data
-        self.xllcorner = xllcorner
-        self.yllcorner = yllcorner
-        self.cellsize = cellsize
-        self.nodata_value = nodata_value
         self.total_data_points = None
 
     def get_total_data_points(self, include_nodata: bool = True) -> int:
@@ -40,21 +48,3 @@ class AsciiGridData:
                     continue
                 x = self.xllcorner + (x_idx + 0.5) * self.cellsize
                 yield x, y, col
-
-    def get_ncols(self) -> int:
-        return len(self.grid_data[0])
-
-    def get_nrows(self) -> int:
-        return len(self.grid_data)
-
-    def get_xllcorner(self) -> float:
-        return self.xllcorner
-
-    def get_yllcorner(self) -> float:
-        return self.yllcorner
-
-    def get_cellsize(self) -> float:
-        return self.cellsize
-
-    def get_nodata_value(self) -> Optional[float]:
-        return self.nodata_value

@@ -4,7 +4,7 @@ from typing import Tuple, List
 from ascii_grid_to_png import AsciiGridData
 
 
-class AsciiGridDataReader:
+class AsciiGridReader:
     valid_headers = [
         'ncols',
         'nrows',
