@@ -34,7 +34,7 @@ poetry-outdated:
 poetry-update:
 	poetry update
 
-poetry-export-requirements:
+poetry-export-requirements: ## Export poetry lockfile to requirements.txt
 	poetry export -f requirements.txt > requirements.txt
 
 poetry-test:
