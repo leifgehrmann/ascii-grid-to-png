@@ -37,7 +37,7 @@ poetry-update:
 poetry-export-requirements: ## Export poetry lockfile to requirements.txt
 	poetry export -f requirements.txt > requirements.txt
 
-poetry-test:
+test:
 	poetry run pytest
 
 lint: ## check style with flake8
@@ -46,5 +46,7 @@ lint: ## check style with flake8
 coverage: ## check code coverage quickly with the default Python
 	poetry run coverage run --source ascii_grid_to_png setup.py test
 	poetry run coverage report -m
+
+coverage-html: coverage ## check code coverage quickly with the default Python
 	poetry run coverage html
 	$(BROWSER) htmlcov/index.html
