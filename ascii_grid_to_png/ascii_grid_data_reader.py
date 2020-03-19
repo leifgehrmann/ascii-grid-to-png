@@ -40,12 +40,7 @@ class AsciiGridDataReader:
 
                 # Validate headers
                 if 'ncols' not in header_data or 'nrows' not in header_data:
-                    raise Exception(
-                        'Unexpected column count: Expected %d, got %d' % (
-                            int(header_data['ncols']),
-                            len(grid_data_row)
-                        )
-                    )
+                    raise Exception('ncols and nrows not defined')
 
                 # Read grid data
                 grid_data_row = self._read_grid_data_row(line)
