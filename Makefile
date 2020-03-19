@@ -1,8 +1,11 @@
-install:
-	python setup.py install
+poetry-outdated:
+	poetry show --outdated
 
-help: install
-	ascii-grid-to-png --help
+poetry-update:
+	poetry update
 
-run_tests:
-	python -m pytest tests/
+poetry-export-requirements:
+	poetry export -f requirements.txt > requirements.txt
+
+poetry-test:
+	poetry run pytest
