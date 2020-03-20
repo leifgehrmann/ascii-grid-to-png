@@ -1,15 +1,15 @@
-name: Lint
+name: Tests
 
 on: [push, pull_request]
 
 jobs:
-  lint:
+  tests:
 
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        python-version: [3.8]
+        python-version: [3.6, 3.7, 3.8]
 
     steps:
       - uses: actions/checkout@master
@@ -40,5 +40,5 @@ jobs:
         run: poetry install
         if: steps.cache.outputs.cache-hit != 'true'
 
-      - name: Lint
-        run: poetry run flake8 ascii_grid_to_png tests
+      - name: Tests
+        run: poetry run pytest
