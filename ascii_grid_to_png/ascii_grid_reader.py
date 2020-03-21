@@ -1,7 +1,7 @@
 import re
-from typing import Tuple, List
+from typing import Tuple, List, Union
 
-from ascii_grid_to_png import AsciiGrid
+from ascii_grid_to_png import AsciiGrid, AsciiGridHeader
 
 
 class AsciiGridReader:
@@ -15,6 +15,16 @@ class AsciiGridReader:
     ]
 
     def read(self, filepath: str) -> AsciiGrid:
+        return self._read(filepath, False)
+
+    def read_header(self, filepath: str) -> AsciiGridHeader:
+        return self._read(filepath, True)
+
+    def _read(
+            self,
+            filepath: str,
+            header_only: bool
+    ) -> Union[AsciiGrid, AsciiGridHeader]:
         headers_read = False
         headers_size_read = False
         headers_size_is_ints = False
@@ -42,6 +52,9 @@ class AsciiGridReader:
                             and header_data['nrows'].is_integer()
                     continue
 
+                if header_only:
+                    continue
+
                 # Read grid data
                 grid_data_row = self._read_grid_data_row(line)
 
@@ -62,6 +75,17 @@ class AsciiGridReader:
         if not headers_size_is_ints:
             raise Exception('ncols/nrows must be an int')
 
+        if header_only:
+            return AsciiGridHeader(
+                int(header_data['ncols']),
+                int(header_data['nrows']),
+                header_data['xllcorner'],
+                header_data['yllcorner'],
+                header_data['cellsize'],
+                header_data['nodata_value'] if 'nodata_value' in header_data else
+                None
+            )
+
         if len(grid_data) != header_data['nrows']:
             raise Exception(
                 'Unexpected row count: Expected %d, got %d' % (
@@ -70,7 +94,7 @@ class AsciiGridReader:
                 )
             )
 
-        grid_data = AsciiGrid(
+        return AsciiGrid(
             int(header_data['ncols']),
             int(header_data['nrows']),
             header_data['xllcorner'],
@@ -80,8 +104,6 @@ class AsciiGridReader:
             None,
             grid_data
         )
-
-        return grid_data
 
     def _is_header(self, line) -> bool:
         for valid_header in self.valid_headers:

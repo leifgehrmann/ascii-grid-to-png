@@ -29,7 +29,7 @@ class TestAsciiGridReader(unittest.TestCase):
         test_dir = os.path.dirname(os.path.abspath(__file__))
         asc_file = test_dir + '/data/test.asc'
         reader = AsciiGridReader()
-        grid_data_header = reader.read(asc_file)
+        grid_data_header = reader.read_header(asc_file)
 
         assert grid_data_header.get_ncols() == 5
         assert grid_data_header.get_nrows() == 4
