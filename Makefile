@@ -44,7 +44,7 @@ lint: ## check style with flake8
 	poetry run flake8 ascii_grid_to_png tests
 
 coverage: ## check code coverage quickly with the default Python
-	poetry run coverage run --source ascii_grid_to_png setup.py test
+	poetry run coverage run --source ascii_grid_to_png -m pytest
 	poetry run coverage report -m
 
 coverage-html: coverage ## check code coverage quickly with the default Python
