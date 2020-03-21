@@ -1,19 +1,10 @@
 import re
 from typing import Tuple, List
 
-from .ascii_grid_data import AsciiGridData
+from ascii_grid_to_png import AsciiGrid
 
 
-class AsciiGridDataReader:
-    required_headers = [
-        'ncols',
-        'nrows',
-        'xllcorner',
-        'yllcorner',
-        'cellsize',
-        'nodata_value'
-    ]
-
+class AsciiGridReader:
     valid_headers = [
         'ncols',
         'nrows',
@@ -23,24 +14,33 @@ class AsciiGridDataReader:
         'nodata_value'
     ]
 
-    def read(self, filepath: str) -> AsciiGridData:
+    def read(self, filepath: str) -> AsciiGrid:
         headers_read = False
+        headers_size_read = False
+        headers_size_is_ints = False
         header_data = {}
         grid_data = []
         with open(filepath) as file:
             for line in file:
 
                 # Read headers
-                if not headers_read and self._is_header(line):
-                    if self._is_header(line):
-                        header_param, header_value = self._read_header(line)
-                        header_data[header_param] = header_value
+                if not headers_read or \
+                   not headers_size_read or \
+                   not headers_size_is_ints or\
+                   self._is_header(line):
+                    if not self._is_header(line):
                         continue
-                    headers_read = True
 
-                # Validate headers
-                if 'ncols' not in header_data or 'nrows' not in header_data:
-                    raise Exception('ncols or nrows not defined')
+                    header_param, header_value = self._read_header(line)
+                    header_data[header_param] = header_value
+                    headers_read = True
+                    headers_size_read = 'ncols' in header_data and \
+                                        'nrows' in header_data
+                    if headers_size_read:
+                        headers_size_is_ints = \
+                            header_data['ncols'].is_integer() \
+                            and header_data['nrows'].is_integer()
+                    continue
 
                 # Read grid data
                 grid_data_row = self._read_grid_data_row(line)
@@ -56,6 +56,12 @@ class AsciiGridDataReader:
 
                 grid_data.append(self._read_grid_data_row(line))
 
+        if not headers_size_read:
+            raise Exception('Unexpected missing headers: ncols/nrows')
+
+        if not headers_size_is_ints:
+            raise Exception('ncols/nrows must be an int')
+
         if len(grid_data) != header_data['nrows']:
             raise Exception(
                 'Unexpected row count: Expected %d, got %d' % (
@@ -64,22 +70,22 @@ class AsciiGridDataReader:
                 )
             )
 
-        grid_data = AsciiGridData(grid_data)
-
-        if 'xllcorner' in header_data:
-            grid_data.set_xllcorner(header_data['xllcorner'])
-        if 'yllcorner' in header_data:
-            grid_data.set_yllcorner(header_data['yllcorner'])
-        if 'cellsize' in header_data:
-            grid_data.set_cellsize(header_data['cellsize'])
-        if 'nodata_value' in header_data:
-            grid_data.set_nodata_value(header_data['nodata_value'])
+        grid_data = AsciiGrid(
+            int(header_data['ncols']),
+            int(header_data['nrows']),
+            header_data['xllcorner'],
+            header_data['yllcorner'],
+            header_data['cellsize'],
+            header_data['nodata_value'] if 'nodata_value' in header_data else
+            None,
+            grid_data
+        )
 
         return grid_data
 
     def _is_header(self, line) -> bool:
         for valid_header in self.valid_headers:
-            if valid_header in line.lower():
+            if line.lower().startswith(valid_header + ' '):
                 return True
         return False
 
@@ -87,16 +93,13 @@ class AsciiGridDataReader:
         line = re.sub("[ \t]+", ' ', line).strip()
         line_split = line.split()
         if len(line_split) != 2:
-            raise Exception('Invalid header: %s' % line_split)
-
-        if not self._is_header(line_split[0]):
-            raise Exception('Invalid header: %s' % line_split)
+            raise Exception('Invalid header: %s' % line)
 
         return line_split[0].lower(), float(line_split[1])
 
     @staticmethod
     def _read_grid_data_row(line: str) -> List[float]:
-        row_strings = line.split(' ')
+        row_strings = line.strip().split(' ')
         row = []
         for row_string in row_strings:
             row.append(float(row_string))

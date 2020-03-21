@@ -1,7 +1,7 @@
 from typing import List
 import click
 
-from ascii_grid_to_png import AsciiGridDataReader
+from ascii_grid_to_png import AsciiGridReader
 
 
 @click.command()
@@ -26,10 +26,10 @@ def cli(
 ):
     """Output a PNG file from *.asc files"""
 
-    ascii_grid_data_reader = AsciiGridDataReader()
+    ascii_grid_reader = AsciiGridReader()
     ascii_grids = []
     for asc_file in asc_files:
-        ascii_grids.append(ascii_grid_data_reader.read(asc_file))
+        ascii_grids.append(ascii_grid_reader.read(asc_file))
 
 
 if __name__ == '__main__':
