@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "ascii-grid-to-png"
+version = "0.1.0"
+description = "A script to convert ASCII raster files to PNG"
+authors = ["Leif Gehrmann <leif.gehrmann@gmail.com>"]
+license = "LGPL-3.0-only"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+click = "^7.1.1"
+numpy = "^1.18.2"
+scipy = "^1.4.1"
+matplotlib = "^3.2.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.4.1"
+flake8 = "^3.7.9"
+coverage = "^5.0.4"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
+
+[tool.poetry.scripts]
+ascii-grid-to-png = 'ascii_grid_to_png.cli:cli'

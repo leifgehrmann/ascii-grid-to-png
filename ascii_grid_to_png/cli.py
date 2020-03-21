@@ -10,7 +10,8 @@ from ascii_grid_to_png import AsciiGridDataReader
 @click.option('--range-max', default=255.0,
               help='The maximum value. Defaults to 255.')
 @click.option('--bbox', default=None,
-              help='The xllcorner,yllcorner,xurcorner,yurcorner bbox. Defaults to the full extents.')
+              help='The xllcorner,yllcorner,xurcorner,yurcorner bbox. '
+                   'Defaults to the full extents.')
 @click.option('--scale', default=1,
               help='The size of the png being output. Defaults to 1.')
 @click.argument('asc_files', nargs=-1)
