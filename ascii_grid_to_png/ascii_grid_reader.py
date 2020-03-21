@@ -75,6 +75,9 @@ class AsciiGridReader:
         if not headers_size_is_ints:
             raise Exception('ncols/nrows must be an int')
 
+        header_no_data_value = header_data['nodata_value'] if 'nodata_value' \
+            in header_data else None
+
         if header_only:
             return AsciiGridHeader(
                 int(header_data['ncols']),
@@ -82,8 +85,7 @@ class AsciiGridReader:
                 header_data['xllcorner'],
                 header_data['yllcorner'],
                 header_data['cellsize'],
-                header_data['nodata_value'] if 'nodata_value' in header_data else
-                None
+                header_no_data_value
             )
 
         if len(grid_data) != header_data['nrows']:
@@ -100,8 +102,7 @@ class AsciiGridReader:
             header_data['xllcorner'],
             header_data['yllcorner'],
             header_data['cellsize'],
-            header_data['nodata_value'] if 'nodata_value' in header_data else
-            None,
+            header_no_data_value,
             grid_data
         )
 

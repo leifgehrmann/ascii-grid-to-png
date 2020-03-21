@@ -1,4 +1,4 @@
-from typing import List, Optional, Generator
+from typing import List, Optional
 
 from ascii_grid_to_png import AsciiGridHeader
 
